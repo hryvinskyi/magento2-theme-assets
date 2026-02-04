@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2026. Volodymyr Hryvinskyi. All rights reserved.
+ * Author: Volodymyr Hryvinskyi <volodymyr@hryvinskyi.com>
+ * GitHub: https://github.com/hryvinskyi
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Service Interface Preferences -->
+    <preference for="Hryvinskyi\ThemeAssets\Api\AssetPathResolverInterface"
+                type="Hryvinskyi\ThemeAssets\ViewModel\AssetPathResolver"/>
+    <preference for="Hryvinskyi\ThemeAssets\Api\AssetRendererInterface"
+                type="Hryvinskyi\ThemeAssets\ViewModel\AssetRenderer"/>
+    <preference for="Hryvinskyi\ThemeAssets\Api\AssetContentStrategyPoolInterface"
+                type="Hryvinskyi\ThemeAssets\Model\AssetContentStrategyPool"/>
+
+    <!-- Asset Content Strategy Pool Configuration -->
+    <type name="Hryvinskyi\ThemeAssets\Model\AssetContentStrategyPool">
+        <arguments>
+            <argument name="strategies" xsi:type="array">
+                <item name="magento_asset_system" xsi:type="object" sortOrder="10">Hryvinskyi\ThemeAssets\Model\AssetContentStrategy\MagentoAssetSystemStrategy</item>
+                <item name="direct_static_file" xsi:type="object" sortOrder="20">Hryvinskyi\ThemeAssets\Model\AssetContentStrategy\DirectStaticFileStrategy</item>
+                <item name="filesystem_service" xsi:type="object" sortOrder="30">Hryvinskyi\ThemeAssets\Model\AssetContentStrategy\FilesystemServiceStrategy</item>
+            </argument>
+            <argument name="logger" xsi:type="object">HryvinskiyThemeAssetsAssetRendererLogger</argument>
+        </arguments>
+    </type>
+
+    <!-- Custom Logger for Asset Renderer -->
+    <virtualType name="HryvinskiyThemeAssetsAssetRendererLogger" type="Monolog\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">asset_renderer</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">HryvinskiyThemeAssetsAssetRendererHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="HryvinskiyThemeAssetsAssetRendererHandler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">var/log/asset_renderer.log</argument>
+        </arguments>
+    </virtualType>
+
+</config>
