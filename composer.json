@@ -1,6 +1,6 @@
 {
     "name": "hryvinskyi/magento2-theme-assets",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Provides asset rendering functionality for scripts, stylesheets and asset path resolution",
     "type": "magento2-module",
     "require": {

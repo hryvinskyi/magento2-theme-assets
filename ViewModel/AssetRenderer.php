@@ -119,7 +119,7 @@ class AssetRenderer extends AssetPathResolver implements AssetRendererInterface
      * @param string $loadStrategy Loading strategy (sync, async, defer)
      * @param bool $preload Whether to add preload resource hint
      * @param array{priority?: string, attributes?: array<string, string>, position?: string} $options Rendering options
-     * @return string Empty string (script added to HeadTagManager)
+     * @return string The rendered <script> tag
      */
     private function renderExternalScript(
         File $asset,
@@ -180,7 +180,7 @@ class AssetRenderer extends AssetPathResolver implements AssetRendererInterface
      * @param File $asset The asset file
      * @param bool $preload Whether to add preload resource hint
      * @param array{priority?: string, attributes?: array<string, string>, position?: string} $options Rendering options
-     * @return string Empty string (stylesheet added to HeadTagManager)
+     * @return string The rendered <link> tag
      */
     private function renderExternalStyle(
         File $asset,
@@ -193,6 +193,10 @@ class AssetRenderer extends AssetPathResolver implements AssetRendererInterface
             'type' => 'text/css'
         ], $options['attributes'] ?? []);
 
+        // Assigned after the caller's attributes, exactly as the external-script path assigns `src`: the
+        // address is the one thing the tag is useless without, so a caller must not be able to drop or
+        // override it by passing an `href` of its own.
+        $attributes['href'] = $href;
 
         // Add preload hint if requested
         if ($preload) {
